@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Component,ViewChild } from '@angular/core';
+import { Nav, IonicPage, NavController, NavParams, Loading, LoadingController, AlertController } from 'ionic-angular';
+//import { PvapiProvider } from '../../providers/pvapi/pvapi';
+import { Events } from 'ionic-angular';
+//import { Storage } from '@ionic/storage';
+import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 
 /**
  * Generated class for the LoginPage page.
@@ -14,12 +18,112 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
   templateUrl: 'login.html',
 })
 export class LoginPage {
-
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+	@ViewChild(Nav) nav: Nav;
+	loading: Loading;  	
+  	registerCredentials = { email: '', password: '' };
+  	isLoggedIn:boolean = false;
+  	mailLogin:boolean = false;
+  	socialLogin:boolean = true;
+  constructor(	public navCtrl: NavController, 
+  				public navParams: NavParams, 
+  				private loadingCtrl: LoadingController, 
+  				public alertCtrl: AlertController, 
+  				//public pvService: PvapiProvider,
+         	public events: Events,
+          //private storage: Storage,
+          private fb: Facebook,
+          ) {
+    this.showLoading()
+  	fb.getLoginStatus()
+  	   .then(res => {
+         this.loading.dismiss()
+  	     console.log(res.status);
+  	     if(res.status === "connect") {
+  	       this.isLoggedIn = true;
+  	     } else {
+  	       this.isLoggedIn = false;
+  	     }
+  	   })
+  	   .catch(e => {
+         this.loading.dismiss().then(()=>{
+           this.showError("Se presento un error al tratar de cargar credenciales de Facebook. Error presentado :"+e)
+         })
+       });
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad LoginPage');
+  }
+
+
+  public login() {
+    this.showLoading()
+    /*this.pvService.login(this.registerCredentials.email,this.registerCredentials.password).
+    	then(data => { 	    	
+ 	    	if (typeof data.auth_token==="undefined") { 
+ 	    		this.showError(data.warning)
+ 	    	} else {          
+ 	    		this.pvService.getModules(data.id_user,data.auth_token).
+ 	    		    	then(data => { 	    		 	    	
+ 	    		 	    	 	    		 	    	                                                
+ 	    		 	    })
+ 	    		 	    .catch(error =>{
+ 	    		 	      	console.error(error);
+ 	    		 	      	
+ 	    		 	    })          
+ 	    		this.loading.dismiss();
+          this.storage.set('data', JSON.stringify(data));
+          this.events.publish('userlogin');
+ 	    		this.navCtrl.setRoot(HomePage,{data:data});
+ 	    	}
+ 	    })
+ 	    .catch(error =>{
+ 	      	console.error(error);
+ 	      	this.loading.dismiss();
+ 	    })*/
+  }
+ 
+  showLoading() {
+    this.loading = this.loadingCtrl.create({
+      content: 'Cargando...',
+      dismissOnPageChange: true
+    });
+    this.loading.present();
+  }
+ 
+  showError(text) {
+    this.loading.dismiss();
+ 
+    let alert = this.alertCtrl.create({
+      title: 'Error',
+      subTitle: text,
+      buttons: ['OK']
+    });
+    alert.present();
+  }
+
+  loginMail(){
+  	this.mailLogin=true;
+  	this.socialLogin=false;
+  }
+
+  loginSocial(){
+    this.mailLogin=false;
+    this.socialLogin=true;
+  }
+
+  Facebooklogin(){
+    this.showLoading()
+    this.fb.login(['public_profile', 'user_friends', 'email'])
+      .then((res: FacebookLoginResponse) => {
+        this.loading.dismiss()
+        console.log('Logged into Facebook!', res)
+      })
+      .catch(e => {
+        this.loading.dismiss().then(()=>{
+          this.showError("Se presento un error al intentar iniciar sesion con Facebook. Eror presentado :"+e)
+        })
+        console.log('Error logging into Facebook', e)
+      });
   }
 
 }

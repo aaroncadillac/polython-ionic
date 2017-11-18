@@ -6,13 +6,69 @@
 -->
 <ion-header>
 
-  <ion-navbar>
-    <ion-title>login</ion-title>
+  <ion-navbar color="primary">
+    <ion-title>Iniciar sesión</ion-title>
   </ion-navbar>
 
 </ion-header>
 
+<ion-content class="login-content" padding>
+		<ion-row class="logo-row">		
+			<ion-col>
+				<img src="https://www.polymer-project.org/images/logos/p-logo.png" style=" min-width: 110%; max-width: 200%" />
+			</ion-col>
+			<ion-col></ion-col>
+		</ion-row>
+		<div class="login-box email_login" *ngIf="mailLogin">
+			<form (ngSubmit)="login()" #registerForm="ngForm">
+				<ion-row>
+					<ion-col>
+						<ion-list inset>
 
-<ion-content padding>
+							<ion-item>
+								<ion-input type="text" placeholder="Usuario" name="email" [(ngModel)]="registerCredentials.email" required></ion-input>
+							</ion-item>
 
+							<ion-item>
+								<ion-input type="password" placeholder="Contraseña" name="password" [(ngModel)]="registerCredentials.password" required></ion-input>
+							</ion-item>
+
+						</ion-list>
+					</ion-col>
+				</ion-row>
+
+				<ion-row>
+					<ion-col class="signup-col">
+						<button ion-button class="submit-btn" full type="submit" [disabled]="!registerForm.form.valid">Iniciar Sesión</button>
+					</ion-col>
+					<ion-col class="signup-col">
+						<button ion-button class="defaul-btn" full type="submit" (click)="loginSocial()">Regresar</button>
+					</ion-col>
+				</ion-row>
+
+			</form>
+		</div>
+		<div class="login-box" *ngIf="socialLogin">
+			<ion-row>
+				<ion-col class="signup-col">
+					<button ion-button icon-right full block color="danger" (click)="GoogleLogin()" *ngIf="!userProfile">					   
+					   Iniciar sesión con
+					   <ion-icon name="logo-googleplus"></ion-icon>
+					</button>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col class="signup-col">
+					<button ion-button icon-right full (click)="Facebooklogin()" style="background-color: blue;">
+					     Iniciar sesión con
+					     <ion-icon name="logo-facebook"></ion-icon>
+					</button>
+				</ion-col>
+			</ion-row>
+			<ion-row>
+				<ion-col class="signup-col">
+					<button ion-button class="submit-btn" full type="button" (click)="loginMail()">Iniciar con correo electronico</button>
+				</ion-col>
+			</ion-row>
+		</div>
 </ion-content>
