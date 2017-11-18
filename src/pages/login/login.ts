@@ -3,6 +3,7 @@ import { Nav, IonicPage, NavController, NavParams, Loading, LoadingController, A
 //import { PvapiProvider } from '../../providers/pvapi/pvapi';
 import { Events } from 'ionic-angular';
 //import { Storage } from '@ionic/storage';
+import { GooglePlus } from '@ionic-native/google-plus';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 
 /**
@@ -32,6 +33,7 @@ export class LoginPage {
          	public events: Events,
           //private storage: Storage,
           private fb: Facebook,
+          private googlePlus: GooglePlus
           ) {
     this.showLoading()
   	fb.getLoginStatus()
@@ -45,9 +47,8 @@ export class LoginPage {
   	     }
   	   })
   	   .catch(e => {
-         this.loading.dismiss().then(()=>{
-           this.showError("Se presento un error al tratar de cargar credenciales de Facebook. Error presentado :"+e)
-         })
+         this.loading.dismiss()
+        console.log(e)         
        });
   }
 
@@ -115,8 +116,10 @@ export class LoginPage {
     this.showLoading()
     this.fb.login(['public_profile', 'user_friends', 'email'])
       .then((res: FacebookLoginResponse) => {
-        this.loading.dismiss()
-        console.log('Logged into Facebook!', res)
+        this.loading.dismiss().then(()=>{
+          this.showError(JSON.stringify(res))
+        })
+        console.log('Logged into Facebook!', res)        
       })
       .catch(e => {
         this.loading.dismiss().then(()=>{
@@ -125,5 +128,19 @@ export class LoginPage {
         console.log('Error logging into Facebook', e)
       });
   }
-
+  GoogleLogin(){
+    this.showLoading()
+    this.googlePlus.login({})
+      .then(res => {
+         this.loading.dismiss().then(()=>{
+          this.showError(JSON.stringify(res))
+        console.log(res)
+      })
+      .catch(e => {
+        this.loading.dismiss().then(()=>{
+          this.showError("Se presento un error al intentar iniciar sesion con Google. Eror presentado :"+e)
+        })
+        console.error(e)
+      });
+  }
 }

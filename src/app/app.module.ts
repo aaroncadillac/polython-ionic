@@ -11,6 +11,7 @@ import { LoginPage } from '../pages/login/login';
 import { HttpModule } from '@angular/http';
 import { IonicStorageModule } from '@ionic/storage';
 import { Facebook } from '@ionic-native/facebook';
+import { GooglePlus } from '@ionic-native/google-plus';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { Facebook } from '@ionic-native/facebook';
   ],
   providers: [
     Facebook,
+    GooglePlus,
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler}

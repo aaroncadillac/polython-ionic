@@ -86,4 +86,7 @@
         <variable name="APP_ID" value="157964581615355" />
         <variable name="APP_NAME" value="Street Bussines" />
     </plugin>
+    <plugin name="cordova-plugin-googleplus" spec="^5.1.1">
+        <variable name="REVERSED_CLIENT_ID" value="com.googleusercontent.apps.211940129276-vkliokdo4tf39itfk1uc2j4eb5nnmjdt" />
+    </plugin>
 </widget>
