@@ -8,9 +8,17 @@
 
 <ion-content padding>
   Bienvenido.
-  <p>Obtener tienda</p>
+  <div *ngIf="store">
+  	<ion-list>
+  		<ion-item *ngFor="let item of items">
+  			<h3>{{item.name}}</h3>
+			<b> {{item.price}}	</b>
+  		</ion-item>
+  	</ion-list>
+  </div>  
   <button ion-button icon-right class="button" (click)="readQR()">
     Leer QR
     <ion-icon name="camera"></ion-icon>
   </button>
+
 </ion-content>

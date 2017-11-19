@@ -13,6 +13,7 @@ import { IonicStorageModule } from '@ionic/storage';
 import { Facebook } from '@ionic-native/facebook';
 import { GooglePlus } from '@ionic-native/google-plus';
 import { QRScanner } from '@ionic-native/qr-scanner';
+import { ApiProvider } from '../providers/api/api';
 
 @NgModule({
   declarations: [
@@ -34,11 +35,12 @@ import { QRScanner } from '@ionic-native/qr-scanner';
   ],
   providers: [
     Facebook,
-    GooglePlus,
+    GooglePlus,    
     QRScanner,
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    ApiProvider
   ]
 })
 export class AppModule {}

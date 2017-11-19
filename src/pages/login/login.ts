@@ -1,8 +1,7 @@
 import { Component,ViewChild } from '@angular/core';
 import { Nav, IonicPage, NavController, NavParams, Loading, LoadingController, AlertController } from 'ionic-angular';
-//import { PvapiProvider } from '../../providers/pvapi/pvapi';
-import { Events } from 'ionic-angular';
-//import { Storage } from '@ionic/storage';
+import { ApiProvider } from '../../providers/api/api';
+import { Storage } from '@ionic/storage';
 import { HomePage } from '../../pages/home/home';
 import { GooglePlus } from '@ionic-native/google-plus';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
@@ -24,8 +23,8 @@ export class LoginPage {
 	loading: Loading;  	
   	registerCredentials = { email: '', password: '' };
   	isLoggedIn:boolean = false;
-  	mailLogin:boolean = false;
-  	socialLogin:boolean = true;
+  	mailLogin:boolean = true;
+  	socialLogin:boolean = false;
     registerForm:boolean = false;    
     signUpCredentials={
       mail:'',
@@ -36,9 +35,8 @@ export class LoginPage {
   				public navParams: NavParams, 
   				private loadingCtrl: LoadingController, 
   				public alertCtrl: AlertController, 
-  				//public pvService: PvapiProvider,
-         	public events: Events,
-          //private storage: Storage,
+  				public apiService: ApiProvider,         	
+          private storage: Storage,
           private fb: Facebook,
           private googlePlus: GooglePlus
           ) {
@@ -50,7 +48,9 @@ export class LoginPage {
   	       this.isLoggedIn = true;
            this.loading.dismiss().
            then(()=>{
-             this.navCtrl.push(HomePage)
+             this.storage.set('data',JSON.stringify(res)).then(()=>{
+               this.navCtrl.push(HomePage)
+             })             
            })
   	     } else {
   	       this.isLoggedIn = false;
@@ -85,29 +85,46 @@ export class LoginPage {
 
   public login() {
     this.showLoading()
-    /*this.pvService.login(this.registerCredentials.email,this.registerCredentials.password).
+    this.apiService.login(this.registerCredentials.email,this.registerCredentials.password).
     	then(data => { 	    	
- 	    	if (typeof data.auth_token==="undefined") { 
- 	    		this.showError(data.warning)
- 	    	} else {          
- 	    		this.pvService.getModules(data.id_user,data.auth_token).
- 	    		    	then(data => { 	    		 	    	
- 	    		 	    	 	    		 	    	                                                
- 	    		 	    })
- 	    		 	    .catch(error =>{
- 	    		 	      	console.error(error);
- 	    		 	      	
- 	    		 	    })          
- 	    		this.loading.dismiss();
-          this.storage.set('data', JSON.stringify(data));
-          this.events.publish('userlogin');
- 	    		this.navCtrl.setRoot(HomePage,{data:data});
- 	    	}
+ 	    	console.log(data)
+ 	    	if (data.msg!=='error') {
+                   this.loading.dismiss().then(()=>{
+                     this.navCtrl.setRoot(HomePage,{data:data});         
+                   })
+         }
+         else{
+           this.loading.dismiss().then(()=>{
+             this.showError("Error al iniciar sesión")
+           })
+         }
  	    })
  	    .catch(error =>{
  	      	console.error(error);
  	      	this.loading.dismiss();
- 	    })*/
+ 	    })
+  }
+
+  public registerUser() {
+    this.showLoading()
+    this.apiService.register(this.signUpCredentials.name,this.signUpCredentials.password,this.signUpCredentials.mail).
+      then(data => {         
+         console.log(data)
+         if (typeof data.id!=='undefined') {
+                   this.loading.dismiss().then(()=>{
+                     this.navCtrl.setRoot(HomePage,{data:data});         
+                   })
+         }
+         else{
+           this.loading.dismiss().then(()=>{
+             this.showError("Error al crear cuenta. Error registrado : "+data.msg)
+           })
+         }
+       })
+       .catch(error =>{
+           console.error(error);
+           this.loading.dismiss();
+       })
   }
  
   showLoading() {
@@ -146,7 +163,9 @@ export class LoginPage {
     this.fb.login(['public_profile', 'user_friends', 'email'])
       .then((res: FacebookLoginResponse) => {
         this.loading.dismiss().then(()=>{
-          this.navCtrl.push(HomePage)        
+          this.storage.set('data',JSON.stringify(res)).then(()=>{
+               this.navCtrl.push(HomePage)
+             })        
         })
           
         console.log('Logged into Facebook!', res)        
@@ -163,7 +182,9 @@ export class LoginPage {
     this.googlePlus.login({})
       .then(res => {
          this.loading.dismiss().then(()=>{
-            this.navCtrl.push(HomePage)          
+            this.storage.set('data',JSON.stringify(res)).then(()=>{
+               this.navCtrl.push(HomePage)
+             })
         })
         console.log(res)
       })
