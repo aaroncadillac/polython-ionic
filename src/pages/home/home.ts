@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, AlertController, Loading, LoadingController } from 'ionic-angular';
-import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { ApiProvider } from '../../providers/api/api';
 
 @Component({
@@ -10,21 +10,28 @@ import { ApiProvider } from '../../providers/api/api';
 export class HomePage {	
   loading:Loading
   store:boolean=false
+  storeName:string
   items:Array<{
+    "id":string,
     "name": string,
-    "price": number
+    "price": number,
+    "checked":boolean
   }>
   constructor(public navCtrl: NavController,
-              private qrScanner: QRScanner,
+              private barcodeScanner: BarcodeScanner,
               private alertCtrl:AlertController,
               public apiService: ApiProvider,           
               private loadingCtrl: LoadingController) {
     this.showLoading()
     this.apiService.getStore('4bd56f7c-532d-45e0-b593-652db9b4ab96').then(res=>{
       this.items=res.products
+      this.storeName=res.name
       this.loading.dismiss()
+      this.store=true
     })
     .catch(e=>{
+      
+      this.store=false
       this.loading.dismiss()
       console.log(e)
     })
@@ -40,50 +47,24 @@ export class HomePage {
     alert.present();
   }
   readQR(){
-  	this.qrScanner.prepare()
-  	  .then((status: QRScannerStatus) => {
-  	     if (status.authorized) {
-  	       // camera permission was granted
-  	        window.document.querySelector('ion-app').classList.add('transparentBody')
-
-  	       // start scanning
-  	       let scanSub = this.qrScanner.scan().subscribe((text: string) => {
-  	         console.log('Scanned something', text);
-  	         this.apiService.getStore(text).then(res=>{
+    this.barcodeScanner.scan().then((barcodeData) => {
+     this.apiService.getStore(barcodeData).then(res=>{
                    this.items=res.products
+                   this.storeName=res.name
+                   this.store=true
                    this.loading.dismiss()
                  })
                  .catch(e=>{
+                   this.store=false
+
                    this.loading.dismiss()
                    console.log(e)
                  })
-  	         this.qrScanner.hide(); // hide camera preview
-  	         scanSub.unsubscribe(); // stop scanning
-  	       });
-
-  	       // show camera preview
-  	       this.qrScanner.show().then(()=>{
-  	       	window.document.querySelector('ion-app').classList.remove('transparentBody')
-  	       });
-
-  	       // wait for user to scan something, then the observable callback will be called
-
-  	     } else if (status.denied) {
-  	       // camera permission was permanently denied
-  	       // you must use QRScanner.openSettings() method to guide the user to the settings page
-  	       // then they can grant the permission from there
-  	       console.log("no permission")
-  	       this.showError("no permission")
-  	     } else {
-  	     	this.showError("no permission momently")
-  	     	console.log("no permission momently")
-  	       // permission was denied, but not permanently. You can ask for permission again at a later time.
-  	     }
-  	  })
-  	  .catch((e: any) => {
-  	  	this.showError("Error : "+JSON.stringify(e))
-  	  	console.log('Error is', e)
-  	});
+    }, (err) => {
+      this.loading.dismiss()
+                   console.log(err)
+        // An error occurred
+    });  	
   }
   showLoading() {
     this.loading = this.loadingCtrl.create({

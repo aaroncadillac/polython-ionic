@@ -9,11 +9,18 @@
 <ion-content padding>
   Bienvenido.
   <div *ngIf="store">
-  	<ion-list>
-  		<ion-item *ngFor="let item of items">
-  			<h3>{{item.name}}</h3>
-			<b> {{item.price}}	</b>
-  		</ion-item>
+  	<ion-card>
+  	  <ion-card-header>
+  	    {{storeName}}
+  	  </ion-card-header>  	
+  	</ion-card>
+  	<ion-list>  		
+  		<div class="card" *ngFor="let item of items">
+  		  <div class="item item-text-wrap">
+  		   <ion-checkbox></ion-checkbox> {{item.name}} $ {{item.price}}<
+  		  </div>
+  		</div>  			 			
+  		
   	</ion-list>
   </div>  
   <button ion-button icon-right class="button" (click)="readQR()">

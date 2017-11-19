@@ -40,14 +40,8 @@ export class ApiProvider {
     	.toPromise();
   	}
 
-  	getStore(id){
-  		let headers = new Headers(
-  		  		{
-  		  		  'Access-Control-Allow-Origin' : true ,
-  		  		  'Content-type':'application/json'
-  		  		});
-  		  		let options = new RequestOptions({ headers: headers });
-    	return this.http.get(this.base_url+'stores/'+id+'/',options)
+  	getStore(id){  		  		  		
+    	return this.http.get(this.base_url+'stores/'+id+'/')
     	.map(res => res.json())
     	.toPromise();
   	}

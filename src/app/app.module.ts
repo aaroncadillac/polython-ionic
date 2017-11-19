@@ -12,7 +12,7 @@ import { HttpModule } from '@angular/http';
 import { IonicStorageModule } from '@ionic/storage';
 import { Facebook } from '@ionic-native/facebook';
 import { GooglePlus } from '@ionic-native/google-plus';
-import { QRScanner } from '@ionic-native/qr-scanner';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { ApiProvider } from '../providers/api/api';
 
 @NgModule({
@@ -36,7 +36,7 @@ import { ApiProvider } from '../providers/api/api';
   providers: [
     Facebook,
     GooglePlus,    
-    QRScanner,
+    BarcodeScanner,
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
