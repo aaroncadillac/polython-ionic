@@ -13,7 +13,7 @@
 </ion-header>
 
 <ion-content class="login-content" padding>
-		<ion-row class="logo-row">		
+		<ion-row class="logo-row">				
 			<ion-col>
 				<img src="https://www.polymer-project.org/images/logos/p-logo.png" style=" min-width: 110%; max-width: 200%" />
 			</ion-col>
@@ -39,10 +39,13 @@
 
 				<ion-row>
 					<ion-col class="signup-col">
+						<button ion-button class="defaul-btn" full type="button" color="light" (click)="loginSocial()">Cancelar</button>
+					</ion-col>
+					<ion-col class="signup-col">
 						<button ion-button class="submit-btn" full type="submit" [disabled]="!registerForm.form.valid">Iniciar Sesión</button>
 					</ion-col>
 					<ion-col class="signup-col">
-						<button ion-button class="defaul-btn" full type="submit" (click)="loginSocial()">Regresar</button>
+						<button ion-button class="defaul-btn" full type="button" color="secondary" (click)="register()">Registrarse</button>
 					</ion-col>
 				</ion-row>
 
@@ -70,5 +73,36 @@
 					<button ion-button class="submit-btn" full type="button" (click)="loginMail()">Iniciar con correo electronico</button>
 				</ion-col>
 			</ion-row>
+		</div>
+		<div class="login-box email_login" *ngIf="registerForm">
+			<form (ngSubmit)="login()" #singupForm="ngForm">
+				<ion-row>
+					<ion-col>
+						<ion-list inset>
+
+							<ion-item>
+								<ion-input type="text" placeholder="Name" name="name" [(ngModel)]="signUpCredentials.name" required></ion-input>
+							</ion-item>
+							<ion-item>
+								<ion-input type="text" placeholder="Email" name="email" [(ngModel)]="signUpCredentials.mail" required></ion-input>
+							</ion-item>
+							<ion-item>
+								<ion-input type="password" placeholder="Contraseña" name="password" [(ngModel)]="signUpCredentials.password" required></ion-input>
+							</ion-item>
+
+						</ion-list>
+					</ion-col>
+				</ion-row>
+
+				<ion-row>
+					<ion-col class="signup-col">
+						<button ion-button class="defaul-btn" full type="button" color="light" (click)="loginMail()">Cancelar</button>
+					</ion-col>
+					<ion-col class="signup-col">
+						<button ion-button class="submit-btn" full type="submit" [disabled]="!singupForm.form.valid">Registrar</button>
+					</ion-col>					
+				</ion-row>
+
+			</form>
 		</div>
 </ion-content>

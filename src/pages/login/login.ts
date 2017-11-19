@@ -3,6 +3,7 @@ import { Nav, IonicPage, NavController, NavParams, Loading, LoadingController, A
 //import { PvapiProvider } from '../../providers/pvapi/pvapi';
 import { Events } from 'ionic-angular';
 //import { Storage } from '@ionic/storage';
+import { HomePage } from '../../pages/home/home';
 import { GooglePlus } from '@ionic-native/google-plus';
 import { Facebook, FacebookLoginResponse } from '@ionic-native/facebook';
 
@@ -25,6 +26,12 @@ export class LoginPage {
   	isLoggedIn:boolean = false;
   	mailLogin:boolean = false;
   	socialLogin:boolean = true;
+    registerForm:boolean = false;    
+    signUpCredentials={
+      mail:'',
+      name:'',
+      password:''
+    }
   constructor(	public navCtrl: NavController, 
   				public navParams: NavParams, 
   				private loadingCtrl: LoadingController, 
@@ -41,7 +48,10 @@ export class LoginPage {
   	     console.log(res.status);
   	     if(res.status === "connect") {
   	       this.isLoggedIn = true;
-           this.loading.dismiss()
+           this.loading.dismiss().
+           then(()=>{
+             this.navCtrl.push(HomePage)
+           })
   	     } else {
   	       this.isLoggedIn = false;
            this.googlePlus.trySilentLogin({})
@@ -122,11 +132,13 @@ export class LoginPage {
   loginMail(){
   	this.mailLogin=true;
   	this.socialLogin=false;
+    this.registerForm=false
   }
 
   loginSocial(){
     this.mailLogin=false;
     this.socialLogin=true;
+    this.registerForm=false
   }
 
   Facebooklogin(){
@@ -134,8 +146,9 @@ export class LoginPage {
     this.fb.login(['public_profile', 'user_friends', 'email'])
       .then((res: FacebookLoginResponse) => {
         this.loading.dismiss().then(()=>{
-          this.showError(JSON.stringify(res))
+          this.navCtrl.push(HomePage)        
         })
+          
         console.log('Logged into Facebook!', res)        
       })
       .catch(e => {
@@ -150,7 +163,7 @@ export class LoginPage {
     this.googlePlus.login({})
       .then(res => {
          this.loading.dismiss().then(()=>{
-          this.showError(JSON.stringify(res))        
+            this.navCtrl.push(HomePage)          
         })
         console.log(res)
       })
@@ -160,5 +173,10 @@ export class LoginPage {
         })
         console.error(e)
       });
+  }
+  register(){
+    this.registerForm=true
+    this.socialLogin=false;
+    this.mailLogin=false;
   }
 }
