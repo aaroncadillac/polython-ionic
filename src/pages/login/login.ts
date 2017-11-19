@@ -37,17 +37,34 @@ export class LoginPage {
           ) {
     this.showLoading()
   	fb.getLoginStatus()
-  	   .then(res => {
-         this.loading.dismiss()
+  	   .then(res => {         
   	     console.log(res.status);
   	     if(res.status === "connect") {
   	       this.isLoggedIn = true;
+           this.loading.dismiss()
   	     } else {
   	       this.isLoggedIn = false;
+           this.googlePlus.trySilentLogin({})
+                 .then(res => {
+                    this.loading.dismiss()
+                    console.log(res)
+                  })                                    
+                 .catch(e => {
+                   this.loading.dismiss()
+                   console.error(e)
+                 });
   	     }
   	   })
-  	   .catch(e => {
-         this.loading.dismiss()
+  	   .catch(e => {         
+         this.googlePlus.trySilentLogin({})
+               .then(res => {
+                  this.loading.dismiss()
+                 console.log(res)
+               })
+               .catch(e => {
+                 this.loading.dismiss()
+                 console.error(e)
+               });
         console.log(e)         
        });
   }
@@ -133,7 +150,8 @@ export class LoginPage {
     this.googlePlus.login({})
       .then(res => {
          this.loading.dismiss().then(()=>{
-          this.showError(JSON.stringify(res))
+          this.showError(JSON.stringify(res))        
+        })
         console.log(res)
       })
       .catch(e => {
